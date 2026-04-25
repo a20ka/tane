@@ -6,8 +6,8 @@ import { prisma } from "./prisma";
 import { CATEGORIES, REACTIONS } from "./categories";
 import { isAdmin } from "./auth";
 
-const VALID_CATEGORIES = new Set(CATEGORIES.map((c) => c.id));
-const VALID_REACTIONS = new Set(REACTIONS.map((r) => r.id));
+const VALID_CATEGORIES: Set<string> = new Set(CATEGORIES.map((c) => c.id));
+const VALID_REACTIONS: Set<string> = new Set(REACTIONS.map((r) => r.id));
 
 export async function createIdea(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
