@@ -1,8 +1,27 @@
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 import { createIdea } from "@/lib/actions";
-import { CATEGORIES } from "@/lib/categories";
+import { getCurrentUser } from "@/lib/auth";
 
-export default function NewIdea() {
+export const dynamic = "force-dynamic";
+export const metadata = { title: "種を蒔く" };
+
+export default async function NewIdea({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
+  const [genres, user, sp] = await Promise.all([
+    prisma.genre.findMany({
+      orderBy: { order: "asc" },
+      include: { types: { orderBy: { order: "asc" } } },
+    }),
+    getCurrentUser(),
+    searchParams,
+  ]);
+
+  const preselectedType = sp.type ?? "";
+
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-8">
       <Link href="/" className="text-sm text-zinc-500 hover:underline">
@@ -12,26 +31,27 @@ export default function NewIdea() {
 
       <form action={createIdea} className="space-y-5">
         <div>
-          <label className="mb-2 block text-sm font-medium">カテゴリ</label>
-          <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map((c) => (
-              <label
-                key={c.id}
-                className="flex cursor-pointer items-center gap-1 rounded-full border border-zinc-300 px-3 py-1 text-sm has-[:checked]:bg-zinc-900 has-[:checked]:text-white dark:border-zinc-700 dark:has-[:checked]:bg-zinc-100 dark:has-[:checked]:text-zinc-900"
-              >
-                <input
-                  type="radio"
-                  name="category"
-                  value={c.id}
-                  defaultChecked={c.id === "other"}
-                  className="sr-only"
-                />
-                <span>
-                  {c.emoji} {c.label}
-                </span>
-              </label>
+          <label htmlFor="typeId" className="mb-1 block text-sm font-medium">
+            ジャンル / タイプ <span className="text-rose-500">*</span>
+          </label>
+          <select
+            id="typeId"
+            name="typeId"
+            required
+            defaultValue={preselectedType}
+            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-950"
+          >
+            <option value="">選択してください</option>
+            {genres.map((g) => (
+              <optgroup key={g.id} label={`${g.emoji} ${g.label}`}>
+                {g.types.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.label}
+                  </option>
+                ))}
+              </optgroup>
             ))}
-          </div>
+          </select>
         </div>
 
         <div>
@@ -61,18 +81,30 @@ export default function NewIdea() {
           />
         </div>
 
-        <div>
-          <label htmlFor="authorName" className="mb-1 block text-sm font-medium">
-            名前（任意）
-          </label>
-          <input
-            id="authorName"
-            name="authorName"
-            maxLength={40}
-            placeholder="未入力なら匿名"
-            className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
-          />
-        </div>
+        {user ? (
+          <div className="rounded-md bg-zinc-50 p-3 text-sm text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
+            投稿者：<span className="font-medium">{user.displayName}</span>
+          </div>
+        ) : (
+          <div>
+            <label htmlFor="authorName" className="mb-1 block text-sm font-medium">
+              名前（任意）
+            </label>
+            <input
+              id="authorName"
+              name="authorName"
+              maxLength={40}
+              placeholder="未入力なら匿名"
+              className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+            />
+            <p className="mt-1 text-xs text-zinc-500">
+              <Link href="/signup" className="underline">
+                登録
+              </Link>{" "}
+              すると名前にプロフィールが付き、他のユーザーから「形にしたい」と声がかかる可能性が増えます。
+            </p>
+          </div>
+        )}
 
         <button
           type="submit"

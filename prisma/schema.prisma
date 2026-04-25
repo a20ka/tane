@@ -10,18 +10,55 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  passwordHash String
+  displayName  String
+  bio          String?
+  createdAt    DateTime         @default(now())
+  ideas        Idea[]
+  comments     Comment[]
+  reactions    Reaction[]
+  interests    InterestSignal[] @relation("UserInterests")
+}
+
+model Genre {
+  id    String @id
+  label String
+  emoji String
+  order Int    @default(0)
+  types Type[]
+}
+
+model Type {
+  id      String @id
+  genreId String
+  genre   Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  label   String
+  order   Int    @default(0)
+  ideas   Idea[]
+
+  @@index([genreId])
+}
+
 model Idea {
-  id         String     @id @default(cuid())
+  id         String           @id @default(cuid())
   title      String
   body       String?
-  category   String
+  typeId     String
+  type       Type             @relation(fields: [typeId], references: [id])
+  authorId   String?
+  author     User?            @relation(fields: [authorId], references: [id], onDelete: SetNull)
   authorName String?
-  createdAt  DateTime   @default(now())
+  createdAt  DateTime         @default(now())
   comments   Comment[]
   reactions  Reaction[]
+  interests  InterestSignal[]
 
+  @@index([typeId])
   @@index([createdAt])
-  @@index([category])
+  @@index([authorId])
 }
 
 model Comment {
@@ -29,7 +66,10 @@ model Comment {
   ideaId     String
   idea       Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
   body       String
+  authorId   String?
+  author     User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   authorName String?
+  isAugment  Boolean  @default(false)
   createdAt  DateTime @default(now())
 
   @@index([ideaId])
@@ -39,8 +79,23 @@ model Reaction {
   id        String   @id @default(cuid())
   ideaId    String
   idea      Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   type      String
   createdAt DateTime @default(now())
 
+  @@index([ideaId])
+}
+
+model InterestSignal {
+  id        String   @id @default(cuid())
+  ideaId    String
+  idea      Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation("UserInterests", fields: [userId], references: [id], onDelete: Cascade)
+  message   String?
+  createdAt DateTime @default(now())
+
+  @@unique([ideaId, userId])
   @@index([ideaId])
 }
