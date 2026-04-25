@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { isAdmin } from "@/lib/auth";
+import { getSiteUrl } from "@/lib/site";
 import { adminLogout } from "./admin/login/actions";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_URL = getSiteUrl();
 const SITE_NAME = "Tane";
 const SITE_TITLE = "Tane — 未完成のアイデアを蒔く";
 const SITE_DESCRIPTION =
