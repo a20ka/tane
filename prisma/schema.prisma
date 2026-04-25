@@ -1,0 +1,46 @@
+// Tane — share half-baked ideas
+// learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Idea {
+  id         String     @id @default(cuid())
+  title      String
+  body       String?
+  category   String
+  authorName String?
+  createdAt  DateTime   @default(now())
+  comments   Comment[]
+  reactions  Reaction[]
+
+  @@index([createdAt])
+  @@index([category])
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  ideaId     String
+  idea       Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  body       String
+  authorName String?
+  createdAt  DateTime @default(now())
+
+  @@index([ideaId])
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  ideaId    String
+  idea      Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  type      String
+  createdAt DateTime @default(now())
+
+  @@index([ideaId])
+}
