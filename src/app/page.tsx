@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { SproutMark } from "@/components/Logo";
+import { JsonLd } from "@/components/JsonLd";
+import { getSiteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -32,34 +35,92 @@ export default async function Home() {
     ideaCountByGenre.set(genreId, (ideaCountByGenre.get(genreId) ?? 0) + row._count._all);
   }
 
+  const siteUrl = getSiteUrl();
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        url: siteUrl,
+        name: "Tane",
+        alternateName: "種",
+        description:
+          "未完成のアイデアを蒔いて、みんなで育てて形にする場所。物語・映画・ゲーム・体験・夢など、あらゆるジャンルのクリエイティブな種を共有できます。",
+        inLanguage: "ja-JP",
+        publisher: { "@id": `${siteUrl}/#organization` },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${siteUrl}/?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organization`,
+        url: siteUrl,
+        name: "Tane",
+        description: "アイデアの種を蒔いて、みんなで育てて形にするプラットフォーム",
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": `${siteUrl}/#webpage`,
+        url: siteUrl,
+        name: "Tane — 世界のアイデアの脳みそ",
+        isPartOf: { "@id": `${siteUrl}/#website` },
+        about: { "@id": `${siteUrl}/#organization` },
+        inLanguage: "ja-JP",
+      },
+    ],
+  };
+
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">
-      <header className="mb-10 text-center">
-        <h1 className="text-3xl font-bold sm:text-4xl">🌱 Tane</h1>
-        <p className="mt-2 text-sm text-zinc-500">
-          世界のアイデアの脳みそ。種を蒔いて、みんなで育てる。
+    <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
+      <JsonLd data={websiteSchema} />
+      <header className="mb-14 text-center">
+        <div className="mb-4 inline-flex text-sprout">
+          <SproutMark size={64} />
+        </div>
+        <h1 className="font-serif text-4xl font-bold tracking-wide sm:text-5xl">
+          Tane
+        </h1>
+        <p className="mt-4 font-hand text-base text-soil-mid">
+          世界のアイデアの脳みそ。
         </p>
-        <Link
-          href="/new"
-          className="mt-5 inline-block rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-white hover:opacity-90 dark:bg-zinc-100 dark:text-zinc-900"
-        >
-          + 種を蒔く
+        <p className="mt-1 font-serif text-sm text-soil-faint">
+          まだ形になっていない種を蒔いて、みんなで育てる。
+        </p>
+        <Link href="/new" className="btn-primary mt-7">
+          <span>🌱</span>
+          <span>種を蒔く</span>
         </Link>
       </header>
 
-      <section className="mb-12">
-        <h2 className="mb-3 text-sm font-semibold text-zinc-500">ジャンルから探す</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <section className="mb-14">
+        <h2 className="section-title mb-5">ジャンルから探す</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {genres.map((g) => (
             <Link
               key={g.id}
               href={`/g/${g.id}`}
-              className="rounded-lg border border-zinc-200 p-4 transition hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
+              className="paper-card group block p-5"
             >
-              <div className="text-2xl">{g.emoji}</div>
-              <div className="mt-1 font-semibold">{g.label}</div>
-              <div className="mt-1 text-xs text-zinc-500">
-                {g._count.types}タイプ · {ideaCountByGenre.get(g.id) ?? 0}アイデア
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">{g.emoji}</div>
+                <div className="flex-1">
+                  <div className="font-serif text-lg font-bold text-soil group-hover:text-sprout transition-colors">
+                    {g.label}
+                  </div>
+                  <div className="mt-1 font-hand text-xs text-soil-faint">
+                    {g._count.types}タイプ ・ {ideaCountByGenre.get(g.id) ?? 0}つの種
+                  </div>
+                </div>
+                <div className="font-serif text-soil-faint group-hover:text-sprout transition-colors">
+                  →
+                </div>
               </div>
             </Link>
           ))}
@@ -67,42 +128,39 @@ export default async function Home() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-500">最近の種</h2>
+        <h2 className="section-title mb-5">最近蒔かれた種</h2>
         {ideas.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center text-sm text-zinc-500 dark:border-zinc-700">
-            まだ種が蒔かれていません。
-            <br />
-            最初の一粒を蒔いてみませんか？
+          <div className="empty-paper">
+            <p className="text-base">まだ何も蒔かれていません</p>
+            <p className="mt-2 text-sm">最初の一粒をあなたから</p>
           </div>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-4">
             {ideas.map((idea) => {
-              const typeSlug = idea.type.id.replace(`${idea.type.genreId}-`, "");
-              const author = idea.author?.displayName ?? idea.authorName ?? "匿名";
+              const author = idea.author?.displayName ?? idea.authorName ?? "名もなき種人";
               return (
                 <li key={idea.id}>
-                  <Link
-                    href={`/idea/${idea.id}`}
-                    className="block rounded-lg border border-zinc-200 p-4 transition hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
-                  >
-                    <div className="mb-1 flex flex-wrap items-center gap-x-2 text-xs text-zinc-500">
-                      <span>
+                  <Link href={`/idea/${idea.id}`} className="paper-card group block p-5">
+                    <div className="mb-2 flex flex-wrap items-center gap-x-2 font-hand text-xs text-soil-faint">
+                      <span className="text-sprout">
                         {idea.type.genre.emoji} {idea.type.genre.label}
                       </span>
                       <span>›</span>
                       <span>{idea.type.label}</span>
-                      <span>·</span>
+                      <span className="text-line">|</span>
                       <span>{dateFmt.format(idea.createdAt)}</span>
-                      <span>·</span>
+                      <span className="text-line">|</span>
                       <span>{author}</span>
                     </div>
-                    <h3 className="font-semibold">{idea.title}</h3>
+                    <h3 className="font-serif text-lg font-bold text-soil group-hover:text-sprout transition-colors">
+                      {idea.title}
+                    </h3>
                     {idea.body && (
-                      <p className="mt-1 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">
+                      <p className="mt-2 line-clamp-2 text-sm text-soil-mid">
                         {idea.body}
                       </p>
                     )}
-                    <div className="mt-2 flex gap-3 text-xs text-zinc-500">
+                    <div className="mt-3 flex gap-4 font-hand text-xs text-soil-faint">
                       <span>💬 {idea._count.comments}</span>
                       <span>🌱 {idea._count.reactions}</span>
                       <span>🤝 {idea._count.interests}</span>

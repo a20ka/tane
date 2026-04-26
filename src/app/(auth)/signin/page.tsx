@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { signin } from "./actions";
+import { SproutMark } from "@/components/Logo";
 
 export const metadata = { title: "ログイン", robots: { index: false } };
 
@@ -11,20 +12,41 @@ export default async function SigninPage({
   const { error } = await searchParams;
   return (
     <main className="mx-auto w-full max-w-sm flex-1 px-6 py-12">
-      <Link href="/" className="text-sm text-zinc-500 hover:underline">
-        ← 戻る
+      <Link
+        href="/"
+        className="font-hand text-sm text-soil-faint hover:text-sprout transition-colors"
+      >
+        ← ホームに戻る
       </Link>
-      <h1 className="mt-3 mb-6 text-2xl font-bold">🌱 ログイン</h1>
+      <header className="mt-5 mb-8 text-center">
+        <div className="mb-3 inline-flex text-sprout">
+          <SproutMark size={48} />
+        </div>
+        <h1 className="font-serif text-2xl font-bold text-soil">おかえりなさい</h1>
+        <p className="mt-2 font-hand text-sm text-soil-faint">
+          あなたが蒔いた種が待っています
+        </p>
+      </header>
 
       {error === "invalid" && (
-        <div className="mb-4 rounded-md border border-rose-300 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300">
+        <div
+          className="mb-4 rounded-[10px_12px_10px_12px] border p-3 font-hand text-sm"
+          style={{
+            background: "color-mix(in srgb, var(--berry) 10%, var(--bg-raised))",
+            borderColor: "color-mix(in srgb, var(--berry) 40%, var(--line))",
+            color: "var(--berry)",
+          }}
+        >
           メールアドレスまたはパスワードが正しくありません
         </div>
       )}
 
-      <form action={signin} className="space-y-3">
+      <form action={signin} className="paper-card-flat space-y-4 p-6">
         <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium">
+          <label
+            htmlFor="email"
+            className="mb-2 block font-hand text-sm text-soil-mid"
+          >
             メールアドレス
           </label>
           <input
@@ -33,11 +55,14 @@ export default async function SigninPage({
             type="email"
             required
             autoComplete="email"
-            className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+            className="input-paper"
           />
         </div>
         <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium">
+          <label
+            htmlFor="password"
+            className="mb-2 block font-hand text-sm text-soil-mid"
+          >
             パスワード
           </label>
           <input
@@ -46,19 +71,16 @@ export default async function SigninPage({
             type="password"
             required
             autoComplete="current-password"
-            className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+            className="input-paper"
           />
         </div>
-        <button
-          type="submit"
-          className="w-full rounded-full bg-zinc-900 py-2.5 font-medium text-white hover:opacity-90 dark:bg-zinc-100 dark:text-zinc-900"
-        >
+        <button type="submit" className="btn-primary w-full">
           ログイン
         </button>
       </form>
-      <p className="mt-4 text-center text-sm text-zinc-500">
+      <p className="mt-5 text-center font-hand text-sm text-soil-faint">
         アカウントをお持ちでない方は{" "}
-        <Link href="/signup" className="text-zinc-900 hover:underline dark:text-zinc-100">
+        <Link href="/signup" className="text-sprout underline">
           新規登録
         </Link>
       </p>

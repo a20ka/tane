@@ -23,23 +23,35 @@ export default async function NewIdea({
   const preselectedType = sp.type ?? "";
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-8">
-      <Link href="/" className="text-sm text-zinc-500 hover:underline">
-        ← 戻る
+    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+      <Link
+        href="/"
+        className="font-hand text-sm text-soil-faint hover:text-sprout transition-colors"
+      >
+        ← ホームに戻る
       </Link>
-      <h1 className="mt-3 mb-6 text-2xl font-bold">🌱 種を蒔く</h1>
+      <header className="mt-4 mb-8">
+        <div className="text-4xl">🌱</div>
+        <h1 className="mt-3 font-serif text-3xl font-bold text-soil">種を蒔く</h1>
+        <p className="mt-2 font-hand text-sm text-soil-faint">
+          ぼんやりした思いつきで大丈夫。誰かが育ててくれます。
+        </p>
+      </header>
 
-      <form action={createIdea} className="space-y-5">
+      <form action={createIdea} className="paper-card-flat space-y-5 p-6">
         <div>
-          <label htmlFor="typeId" className="mb-1 block text-sm font-medium">
-            ジャンル / タイプ <span className="text-rose-500">*</span>
+          <label
+            htmlFor="typeId"
+            className="mb-2 block font-hand text-sm text-soil-mid"
+          >
+            ジャンル / タイプ <span className="text-berry">*</span>
           </label>
           <select
             id="typeId"
             name="typeId"
             required
             defaultValue={preselectedType}
-            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-950"
+            className="input-paper"
           >
             <option value="">選択してください</option>
             {genres.map((g) => (
@@ -55,8 +67,11 @@ export default async function NewIdea({
         </div>
 
         <div>
-          <label htmlFor="title" className="mb-1 block text-sm font-medium">
-            タイトル <span className="text-rose-500">*</span>
+          <label
+            htmlFor="title"
+            className="mb-2 block font-hand text-sm text-soil-mid"
+          >
+            タイトル <span className="text-berry">*</span>
           </label>
           <input
             id="title"
@@ -64,12 +79,15 @@ export default async function NewIdea({
             required
             maxLength={140}
             placeholder="一言でアイデアの種を"
-            className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+            className="input-paper font-serif text-base"
           />
         </div>
 
         <div>
-          <label htmlFor="body" className="mb-1 block text-sm font-medium">
+          <label
+            htmlFor="body"
+            className="mb-2 block font-hand text-sm text-soil-mid"
+          >
             中身（任意）
           </label>
           <textarea
@@ -77,17 +95,20 @@ export default async function NewIdea({
             name="body"
             rows={6}
             placeholder="ぼんやりした思いつきでOK。完成度は低くてかまいません。"
-            className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+            className="input-paper resize-none font-serif"
           />
         </div>
 
         {user ? (
-          <div className="rounded-md bg-zinc-50 p-3 text-sm text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
-            投稿者：<span className="font-medium">{user.displayName}</span>
+          <div className="rounded-[10px_12px_10px_12px] border border-line-soft bg-paper p-3 font-hand text-sm text-soil-mid">
+            投稿者：<span className="text-soil font-bold">{user.displayName}</span>
           </div>
         ) : (
           <div>
-            <label htmlFor="authorName" className="mb-1 block text-sm font-medium">
+            <label
+              htmlFor="authorName"
+              className="mb-2 block font-hand text-sm text-soil-mid"
+            >
               名前（任意）
             </label>
             <input
@@ -95,22 +116,19 @@ export default async function NewIdea({
               name="authorName"
               maxLength={40}
               placeholder="未入力なら匿名"
-              className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+              className="input-paper"
             />
-            <p className="mt-1 text-xs text-zinc-500">
-              <Link href="/signup" className="underline">
+            <p className="mt-2 font-hand text-xs text-soil-faint">
+              <Link href="/signup" className="text-sprout underline">
                 登録
               </Link>{" "}
-              すると名前にプロフィールが付き、他のユーザーから「形にしたい」と声がかかる可能性が増えます。
+              すると、「形にしたい」と声をかけてもらえる可能性が増えます。
             </p>
           </div>
         )}
 
-        <button
-          type="submit"
-          className="w-full rounded-full bg-zinc-900 py-2.5 font-medium text-white hover:opacity-90 dark:bg-zinc-100 dark:text-zinc-900"
-        >
-          蒔く
+        <button type="submit" className="btn-primary w-full">
+          🌱 蒔く
         </button>
       </form>
     </main>

@@ -8,24 +8,9 @@ for (const line of env.split(/\r?\n/)) {
 }
 
 const TAXONOMY = [
-  { id: "stories", emoji: "📖", label: "物語", types: [
-    { id: "short", label: "短編" },
-    { id: "long", label: "長編・小説" },
-    { id: "poem", label: "詩・短歌" },
-    { id: "fable", label: "寓話・童話" },
-    { id: "ss", label: "ショートショート" },
-  ]},
-  { id: "screen", emoji: "🎬", label: "映像", types: [
-    { id: "movie", label: "映画" },
-    { id: "drama", label: "ドラマ" },
-    { id: "short-video", label: "短編動画" },
-    { id: "anime", label: "アニメ" },
-  ]},
-  { id: "games", emoji: "🎮", label: "ゲーム", types: [
-    { id: "board", label: "ボード・テーブル" },
-    { id: "card", label: "カード" },
-    { id: "experience", label: "体験型" },
-    { id: "digital", label: "デジタル" },
+  { id: "drink", emoji: "🍻", label: "飲み会", types: [
+    { id: "song", label: "飲み歌" },
+    { id: "game", label: "飲みゲーム" },
   ]},
   { id: "experience", emoji: "🎉", label: "体験・遊び", types: [
     { id: "event", label: "イベント企画" },
@@ -36,27 +21,6 @@ const TAXONOMY = [
     { id: "ogiri", label: "大喜利" },
     { id: "episode", label: "エピソード" },
     { id: "mystery", label: "不思議な話" },
-  ]},
-  { id: "creative", emoji: "🎨", label: "創作", types: [
-    { id: "manga", label: "漫画・イラスト" },
-    { id: "music", label: "音楽" },
-    { id: "product", label: "プロダクト・発明" },
-  ]},
-  { id: "life", emoji: "🍱", label: "暮らし", types: [
-    { id: "tip", label: "暮らしの工夫" },
-    { id: "cooking", label: "料理・レシピ" },
-    { id: "diy", label: "DIY" },
-    { id: "space", label: "空間づくり" },
-  ]},
-  { id: "dream", emoji: "💤", label: "夢", types: [
-    { id: "today", label: "その日見た夢" },
-    { id: "memorable", label: "印象的な夢" },
-    { id: "nightmare", label: "悪夢" },
-    { id: "recurring", label: "繰り返す夢" },
-    { id: "lucid", label: "明晰夢" },
-  ]},
-  { id: "other", emoji: "✨", label: "その他", types: [
-    { id: "general", label: "分類しきれないもの" },
   ]},
 ];
 
