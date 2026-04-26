@@ -114,3 +114,43 @@ export async function deleteComment(formData: FormData) {
   await prisma.comment.delete({ where: { id } });
   if (ideaId) revalidatePath(`/idea/${ideaId}`);
 }
+
+export async function createType(formData: FormData) {
+  if (!(await isAdmin())) {
+    redirect("/admin/login");
+  }
+  const genreId = String(formData.get("genreId") ?? "").trim();
+  const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
+  const label = String(formData.get("label") ?? "").trim();
+
+  if (!genreId || !slug || !label) {
+    redirect("/admin/types?error=missing");
+  }
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    redirect("/admin/types?error=slug");
+  }
+
+  const genre = await prisma.genre.findUnique({ where: { id: genreId } });
+  if (!genre) {
+    redirect("/admin/types?error=genre");
+  }
+
+  const id = `${genreId}-${slug}`;
+  const existing = await prisma.type.findUnique({ where: { id } });
+  if (existing) {
+    redirect("/admin/types?error=duplicate");
+  }
+
+  const last = await prisma.type.findFirst({
+    where: { genreId },
+    orderBy: { order: "desc" },
+    select: { order: true },
+  });
+  const order = (last?.order ?? -1) + 1;
+
+  await prisma.type.create({ data: { id, genreId, label, order } });
+
+  revalidatePath("/");
+  revalidatePath(`/g/${genreId}`);
+  redirect("/admin/types?ok=1");
+}
