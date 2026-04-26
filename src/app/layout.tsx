@@ -1,10 +1,31 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Noto_Serif_JP, Noto_Sans_JP, Klee_One } from "next/font/google";
 import "./globals.css";
 import { isAdmin, getCurrentUser } from "@/lib/auth";
 import { getSiteUrl } from "@/lib/site";
 import { adminLogout } from "./admin/login/actions";
 import { signout } from "./(auth)/signin/actions";
+import { Logo } from "@/components/Logo";
+
+const serif = Noto_Serif_JP({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-noto-serif",
+  display: "swap",
+});
+const sans = Noto_Sans_JP({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-noto-sans",
+  display: "swap",
+});
+const hand = Klee_One({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-klee",
+  display: "swap",
+});
 
 const SITE_URL = getSiteUrl();
 const SITE_NAME = "Tane";
@@ -58,56 +79,66 @@ export default async function RootLayout({
 }>) {
   const [admin, user] = await Promise.all([isAdmin(), getCurrentUser()]);
   return (
-    <html lang="ja" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-        <header className="mx-auto w-full max-w-3xl px-6 pt-4">
-          <nav className="flex items-center justify-between text-sm">
-            <Link href="/" className="font-bold text-base">
-              🌱 Tane
+    <html
+      lang="ja"
+      className={`h-full antialiased ${serif.variable} ${sans.variable} ${hand.variable}`}
+    >
+      <body className="min-h-full flex flex-col">
+        <header className="mx-auto w-full max-w-3xl px-6 pt-6">
+          <nav className="flex items-center justify-between">
+            <Link href="/" className="text-soil hover:text-sprout transition-colors">
+              <Logo size={28} />
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4 text-sm">
               {user ? (
                 <>
-                  <span className="text-zinc-600 dark:text-zinc-400">
+                  <span className="font-hand text-soil-mid">
                     {user.displayName} さん
                   </span>
                   <form action={signout}>
-                    <button type="submit" className="text-zinc-500 hover:underline">
+                    <button type="submit" className="text-soil-faint hover:text-sprout transition-colors">
                       ログアウト
                     </button>
                   </form>
                 </>
               ) : (
                 <>
-                  <Link href="/signin" className="text-zinc-600 hover:underline dark:text-zinc-400">
+                  <Link href="/signin" className="text-soil-mid hover:text-sprout transition-colors">
                     ログイン
                   </Link>
                   <Link
                     href="/signup"
-                    className="rounded-full bg-zinc-900 px-3 py-1 text-xs font-medium text-white hover:opacity-90 dark:bg-zinc-100 dark:text-zinc-900"
+                    className="btn-primary"
+                    style={{ padding: "0.4rem 1rem", fontSize: "0.8rem" }}
                   >
-                    新規登録
+                    はじめる
                   </Link>
                 </>
               )}
             </div>
           </nav>
         </header>
-        {children}
-        <footer className="mx-auto w-full max-w-3xl border-t border-zinc-200 px-6 py-6 text-xs text-zinc-500 dark:border-zinc-800">
-          <div className="flex items-center justify-between">
-            <span>🌱 Tane — アイデアの種を育てる場所</span>
+        <div className="flex-1 flex flex-col">{children}</div>
+        <footer className="mx-auto w-full max-w-3xl px-6 pb-8 pt-12">
+          <hr className="ruled-divider" />
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+            <span className="font-hand text-soil-faint">
+              🌱 種を蒔いて、みんなで育てる場所
+            </span>
             {admin ? (
               <form action={adminLogout}>
                 <button
                   type="submit"
-                  className="rounded-full border border-zinc-300 px-3 py-1 hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
+                  className="font-hand text-soil-faint hover:text-sprout transition-colors"
                 >
-                  管理者ログイン中 · ログアウト
+                  管理者 · ログアウト
                 </button>
               </form>
             ) : (
-              <Link href="/admin/login" className="hover:underline">
+              <Link
+                href="/admin/login"
+                className="font-hand text-soil-faint hover:text-sprout transition-colors"
+              >
                 管理者
               </Link>
             )}

@@ -77,112 +77,123 @@ export default async function IdeaPage({
   const myInterest = user
     ? idea.interests.find((i) => i.user.displayName === user.displayName)
     : null;
-  const author = idea.author?.displayName ?? idea.authorName ?? "匿名";
+  const author = idea.author?.displayName ?? idea.authorName ?? "名もなき種人";
   const typeSlug = idea.type.id.replace(`${idea.type.genreId}-`, "");
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">
-      <div className="text-sm text-zinc-500">
-        <Link href="/" className="hover:underline">
+    <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
+      <nav className="font-hand text-sm text-soil-faint">
+        <Link href="/" className="hover:text-sprout transition-colors">
           ホーム
-        </Link>{" "}
-        ›{" "}
-        <Link href={`/g/${idea.type.genreId}`} className="hover:underline">
+        </Link>
+        <span className="mx-2">›</span>
+        <Link
+          href={`/g/${idea.type.genreId}`}
+          className="hover:text-sprout transition-colors"
+        >
           {idea.type.genre.emoji} {idea.type.genre.label}
-        </Link>{" "}
-        ›{" "}
-        <Link href={`/g/${idea.type.genreId}/${typeSlug}`} className="hover:underline">
+        </Link>
+        <span className="mx-2">›</span>
+        <Link
+          href={`/g/${idea.type.genreId}/${typeSlug}`}
+          className="hover:text-sprout transition-colors"
+        >
           {idea.type.label}
         </Link>
-      </div>
+      </nav>
 
-      <article className="mt-4">
-        <div className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-500">
-          <span>{dateFmt.format(idea.createdAt)}</span>
-          <span>·</span>
-          <span>{author}</span>
+      <article className="mt-6 paper-card-flat p-7">
+        <div className="flex flex-wrap items-center gap-x-2 font-hand text-xs text-soil-faint">
+          <span>📅 {dateFmt.format(idea.createdAt)}</span>
+          <span className="text-line">|</span>
+          <span>🖋 {author}</span>
         </div>
-        <h1 className="mt-2 text-2xl font-bold">{idea.title}</h1>
+        <h1 className="mt-3 font-serif text-3xl font-bold leading-snug text-soil">
+          {idea.title}
+        </h1>
         {idea.body && (
-          <p className="mt-3 whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">
+          <p className="mt-5 whitespace-pre-wrap font-serif text-base leading-relaxed text-soil">
             {idea.body}
           </p>
         )}
 
         {admin && (
-          <form action={deleteIdea} className="mt-4">
+          <form action={deleteIdea} className="mt-5">
             <input type="hidden" name="id" value={idea.id} />
             <button
               type="submit"
-              className="rounded-md border border-rose-300 px-3 py-1 text-xs text-rose-600 hover:bg-rose-50 dark:border-rose-800 dark:text-rose-400 dark:hover:bg-rose-950/40"
+              className="font-hand text-xs text-berry hover:underline"
             >
-              🗑 この投稿を削除
+              🗑 この種を削除
             </button>
           </form>
         )}
       </article>
 
-      <section className="mt-8 flex flex-wrap gap-2">
-        {REACTIONS.map((r) => (
-          <form key={r.id} action={addReaction}>
-            <input type="hidden" name="ideaId" value={idea.id} />
-            <input type="hidden" name="type" value={r.id} />
-            <button
-              type="submit"
-              className="rounded-full border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
-            >
-              {r.emoji} {r.label}{" "}
-              <span className="text-zinc-500">{reactionCounts[r.id]}</span>
-            </button>
-          </form>
-        ))}
+      <section className="mt-8">
+        <h2 className="section-title mb-3">この種に反応する</h2>
+        <div className="flex flex-wrap gap-2">
+          {REACTIONS.map((r) => (
+            <form key={r.id} action={addReaction}>
+              <input type="hidden" name="ideaId" value={idea.id} />
+              <input type="hidden" name="type" value={r.id} />
+              <button type="submit" className="btn-ghost font-hand">
+                <span>{r.emoji}</span>
+                <span>{r.label}</span>
+                <span className="text-soil-faint">／{reactionCounts[r.id]}</span>
+              </button>
+            </form>
+          ))}
+        </div>
       </section>
 
-      <section className="mt-10 rounded-lg border border-emerald-200 bg-emerald-50/50 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/20">
+      <section
+        className="mt-10 rounded-[14px_16px_13px_17px] border p-5"
+        style={{
+          background: "color-mix(in srgb, var(--accent) 8%, var(--bg-raised))",
+          borderColor: "color-mix(in srgb, var(--accent) 35%, var(--line))",
+        }}
+      >
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">
+          <h2 className="font-serif text-lg font-bold text-soil">
             🤝 形にしたい人 ({idea.interests.length})
           </h2>
         </div>
         {idea.interests.length > 0 && (
-          <ul className="mt-3 space-y-2">
+          <ul className="mt-4 space-y-2">
             {idea.interests.map((s) => (
               <li key={s.id} className="text-sm">
-                <span className="font-medium">{s.user.displayName}</span>
+                <span className="font-serif font-bold text-sprout">
+                  {s.user.displayName}
+                </span>
                 {s.message && (
-                  <span className="ml-2 text-zinc-600 dark:text-zinc-400">
-                    — {s.message}
-                  </span>
+                  <span className="ml-2 text-soil-mid">— {s.message}</span>
                 )}
               </li>
             ))}
           </ul>
         )}
         {user ? (
-          <form action={toggleInterest} className="mt-3 space-y-2">
+          <form action={toggleInterest} className="mt-4 space-y-3">
             <input type="hidden" name="ideaId" value={idea.id} />
             {!myInterest && (
               <input
                 name="message"
                 maxLength={140}
                 placeholder="どう形にしたいか一言（任意）"
-                className="w-full rounded-md border border-emerald-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-emerald-500 dark:border-emerald-800"
+                className="input-paper text-sm"
               />
             )}
             <button
               type="submit"
-              className={
-                myInterest
-                  ? "rounded-full border border-emerald-400 px-4 py-1.5 text-sm text-emerald-700 hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-300 dark:hover:bg-emerald-950/40"
-                  : "rounded-full bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
-              }
+              className={myInterest ? "btn-ghost" : "btn-primary"}
             >
               {myInterest ? "✓ 形にしたい (取り消す)" : "🤝 形にしたい"}
             </button>
           </form>
         ) : (
-          <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
-            <Link href="/signin" className="underline">
+          <p className="mt-3 font-hand text-sm text-soil-mid">
+            <Link href="/signin" className="text-sprout underline">
               ログイン
             </Link>{" "}
             すると「形にしたい」を表明できます。
@@ -190,41 +201,50 @@ export default async function IdeaPage({
         )}
       </section>
 
-      <section className="mt-10">
-        <h2 className="mb-3 font-semibold">🌿 肉付け ({augments.length})</h2>
+      <section className="mt-12">
+        <h2 className="section-title mb-4">🌿 肉付け ({augments.length})</h2>
         {augments.length === 0 && (
-          <p className="mb-3 text-sm text-zinc-500">
+          <p className="mb-4 font-hand text-sm text-soil-faint">
             まだ肉付けされていません。具体化のアイデアを足してみませんか？
           </p>
         )}
-        <ul className="mb-4 space-y-3">
+        <ul className="mb-6 space-y-3">
           {augments.map((c) => {
-            const aname = c.author?.displayName ?? c.authorName ?? "匿名";
+            const aname = c.author?.displayName ?? c.authorName ?? "名もなき種人";
             return (
               <li
                 key={c.id}
-                className="rounded-md border-l-4 border-emerald-400 bg-emerald-50/40 p-3 dark:bg-emerald-950/10"
+                className="rounded-[10px_12px_10px_12px] border-l-4 p-4"
+                style={{
+                  borderLeftColor: "var(--accent)",
+                  background: "color-mix(in srgb, var(--accent) 6%, var(--bg-raised))",
+                }}
               >
-                <div className="mb-1 flex items-center justify-between text-xs text-zinc-500">
+                <div className="mb-2 flex items-center justify-between font-hand text-xs text-soil-faint">
                   <span>
-                    {aname} · {dateFmt.format(c.createdAt)}
+                    🌱 {aname} ・ {dateFmt.format(c.createdAt)}
                   </span>
                   {admin && (
                     <form action={deleteComment}>
                       <input type="hidden" name="id" value={c.id} />
                       <input type="hidden" name="ideaId" value={idea.id} />
-                      <button type="submit" className="text-rose-500 hover:underline">
+                      <button
+                        type="submit"
+                        className="text-berry hover:underline"
+                      >
                         削除
                       </button>
                     </form>
                   )}
                 </div>
-                <p className="whitespace-pre-wrap text-sm">{c.body}</p>
+                <p className="whitespace-pre-wrap font-serif text-sm leading-relaxed text-soil">
+                  {c.body}
+                </p>
               </li>
             );
           })}
         </ul>
-        <form action={addComment} className="space-y-2">
+        <form action={addComment} className="space-y-3 paper-card-flat p-5">
           <input type="hidden" name="ideaId" value={idea.id} />
           <input type="hidden" name="kind" value="augment" />
           <textarea
@@ -232,52 +252,57 @@ export default async function IdeaPage({
             required
             rows={3}
             placeholder="このアイデアを具体化する提案を..."
-            className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+            className="input-paper resize-none"
           />
           {!user && (
             <input
               name="authorName"
               maxLength={40}
               placeholder="名前（任意）"
-              className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700"
+              className="input-paper text-sm"
             />
           )}
-          <button
-            type="submit"
-            className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-          >
-            肉付けする
+          <button type="submit" className="btn-primary">
+            🌿 肉付けする
           </button>
         </form>
       </section>
 
-      <section className="mt-10">
-        <h2 className="mb-3 font-semibold">💬 コメント ({comments.length})</h2>
-        <ul className="mb-4 space-y-3">
+      <section className="mt-12">
+        <h2 className="section-title mb-4">💬 コメント ({comments.length})</h2>
+        <ul className="mb-6 space-y-3">
           {comments.map((c) => {
-            const aname = c.author?.displayName ?? c.authorName ?? "匿名";
+            const aname = c.author?.displayName ?? c.authorName ?? "名もなき種人";
             return (
-              <li key={c.id} className="rounded-md bg-zinc-50 p-3 dark:bg-zinc-900">
-                <div className="mb-1 flex items-center justify-between text-xs text-zinc-500">
+              <li
+                key={c.id}
+                className="rounded-[10px_12px_10px_12px] p-4 paper-card-flat"
+              >
+                <div className="mb-2 flex items-center justify-between font-hand text-xs text-soil-faint">
                   <span>
-                    {aname} · {dateFmt.format(c.createdAt)}
+                    {aname} ・ {dateFmt.format(c.createdAt)}
                   </span>
                   {admin && (
                     <form action={deleteComment}>
                       <input type="hidden" name="id" value={c.id} />
                       <input type="hidden" name="ideaId" value={idea.id} />
-                      <button type="submit" className="text-rose-500 hover:underline">
+                      <button
+                        type="submit"
+                        className="text-berry hover:underline"
+                      >
                         削除
                       </button>
                     </form>
                   )}
                 </div>
-                <p className="whitespace-pre-wrap text-sm">{c.body}</p>
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-soil">
+                  {c.body}
+                </p>
               </li>
             );
           })}
         </ul>
-        <form action={addComment} className="space-y-2">
+        <form action={addComment} className="space-y-3 paper-card-flat p-5">
           <input type="hidden" name="ideaId" value={idea.id} />
           <input type="hidden" name="kind" value="comment" />
           <textarea
@@ -285,20 +310,17 @@ export default async function IdeaPage({
             required
             rows={3}
             placeholder="感想・雑談・ひらめき..."
-            className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+            className="input-paper resize-none"
           />
           {!user && (
             <input
               name="authorName"
               maxLength={40}
               placeholder="名前（任意）"
-              className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700"
+              className="input-paper text-sm"
             />
           )}
-          <button
-            type="submit"
-            className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:opacity-90 dark:bg-zinc-100 dark:text-zinc-900"
-          >
+          <button type="submit" className="btn-ghost font-serif">
             コメントする
           </button>
         </form>

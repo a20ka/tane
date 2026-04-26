@@ -51,18 +51,21 @@ export default async function GenrePage({
   });
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">
-      <Link href="/" className="text-sm text-zinc-500 hover:underline">
-        ← ホーム
+    <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
+      <Link href="/" className="font-hand text-sm text-soil-faint hover:text-sprout transition-colors">
+        ← ホームに戻る
       </Link>
 
-      <header className="mt-3 mb-8">
-        <div className="text-4xl">{genre.emoji}</div>
-        <h1 className="mt-2 text-2xl font-bold">{genre.label}</h1>
+      <header className="mt-4 mb-10">
+        <div className="text-5xl">{genre.emoji}</div>
+        <h1 className="mt-3 font-serif text-3xl font-bold text-soil">{genre.label}</h1>
+        <p className="mt-2 font-hand text-sm text-soil-faint">
+          {ideas.length}つの種が蒔かれています
+        </p>
       </header>
 
-      <section className="mb-10">
-        <h2 className="mb-3 text-sm font-semibold text-zinc-500">タイプから探す</h2>
+      <section className="mb-12">
+        <h2 className="section-title mb-4">タイプから探す</h2>
         <div className="flex flex-wrap gap-2">
           {genre.types.map((t) => {
             const typeSlug = t.id.replace(`${genre.id}-`, "");
@@ -70,10 +73,10 @@ export default async function GenrePage({
               <Link
                 key={t.id}
                 href={`/g/${genre.id}/${typeSlug}`}
-                className="rounded-full border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
+                className="btn-ghost font-hand"
               >
-                {t.label}{" "}
-                <span className="text-zinc-500">{t._count.ideas}</span>
+                {t.label}
+                <span className="text-soil-faint">／{t._count.ideas}</span>
               </Link>
             );
           })}
@@ -81,37 +84,33 @@ export default async function GenrePage({
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-500">
-          {genre.label}の種（最新{ideas.length}件）
-        </h2>
+        <h2 className="section-title mb-4">{genre.label}の種</h2>
         {ideas.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center text-sm text-zinc-500 dark:border-zinc-700">
-            このジャンルにはまだ種がありません。
+          <div className="empty-paper">
+            <p className="text-base">このジャンルにはまだ種がありません</p>
+            <p className="mt-2 text-sm">最初の一粒をあなたから</p>
           </div>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-4">
             {ideas.map((idea) => {
-              const author = idea.author?.displayName ?? idea.authorName ?? "匿名";
+              const author = idea.author?.displayName ?? idea.authorName ?? "名もなき種人";
               return (
                 <li key={idea.id}>
-                  <Link
-                    href={`/idea/${idea.id}`}
-                    className="block rounded-lg border border-zinc-200 p-4 transition hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
-                  >
-                    <div className="mb-1 flex flex-wrap items-center gap-x-2 text-xs text-zinc-500">
-                      <span>{idea.type.label}</span>
-                      <span>·</span>
+                  <Link href={`/idea/${idea.id}`} className="paper-card group block p-5">
+                    <div className="mb-2 flex flex-wrap items-center gap-x-2 font-hand text-xs text-soil-faint">
+                      <span className="text-sprout">{idea.type.label}</span>
+                      <span className="text-line">|</span>
                       <span>{dateFmt.format(idea.createdAt)}</span>
-                      <span>·</span>
+                      <span className="text-line">|</span>
                       <span>{author}</span>
                     </div>
-                    <h3 className="font-semibold">{idea.title}</h3>
+                    <h3 className="font-serif text-lg font-bold text-soil group-hover:text-sprout transition-colors">
+                      {idea.title}
+                    </h3>
                     {idea.body && (
-                      <p className="mt-1 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">
-                        {idea.body}
-                      </p>
+                      <p className="mt-2 line-clamp-2 text-sm text-soil-mid">{idea.body}</p>
                     )}
-                    <div className="mt-2 flex gap-3 text-xs text-zinc-500">
+                    <div className="mt-3 flex gap-4 font-hand text-xs text-soil-faint">
                       <span>💬 {idea._count.comments}</span>
                       <span>🌱 {idea._count.reactions}</span>
                       <span>🤝 {idea._count.interests}</span>

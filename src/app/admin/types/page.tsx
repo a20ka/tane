@@ -32,36 +32,57 @@ export default async function AdminTypesPage({
   ]);
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-8">
-      <Link href="/" className="text-sm text-zinc-500 hover:underline">
-        ← 戻る
+    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+      <Link
+        href="/"
+        className="font-hand text-sm text-soil-faint hover:text-sprout transition-colors"
+      >
+        ← ホームに戻る
       </Link>
-      <h1 className="mt-3 mb-6 text-2xl font-bold">🛠 タイプ管理</h1>
+      <header className="mt-5 mb-8">
+        <div className="text-3xl">🛠</div>
+        <h1 className="mt-3 font-serif text-3xl font-bold text-soil">タイプ管理</h1>
+        <p className="mt-2 font-hand text-sm text-soil-faint">
+          新しいタイプを追加できます
+        </p>
+      </header>
 
       {sp.ok && (
-        <div className="mb-4 rounded-md border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
-          タイプを追加しました
+        <div
+          className="mb-5 rounded-[10px_12px_10px_12px] border p-3 font-hand text-sm"
+          style={{
+            background: "color-mix(in srgb, var(--accent) 10%, var(--bg-raised))",
+            borderColor: "color-mix(in srgb, var(--accent) 40%, var(--line))",
+            color: "var(--accent)",
+          }}
+        >
+          🌱 タイプを追加しました
         </div>
       )}
       {sp.error && ERRORS[sp.error] && (
-        <div className="mb-4 rounded-md border border-rose-300 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300">
+        <div
+          className="mb-5 rounded-[10px_12px_10px_12px] border p-3 font-hand text-sm"
+          style={{
+            background: "color-mix(in srgb, var(--berry) 10%, var(--bg-raised))",
+            borderColor: "color-mix(in srgb, var(--berry) 40%, var(--line))",
+            color: "var(--berry)",
+          }}
+        >
           {ERRORS[sp.error]}
         </div>
       )}
 
-      <section className="mb-8 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-        <h2 className="mb-3 text-base font-semibold">タイプを追加</h2>
+      <section className="paper-card-flat mb-10 p-6">
+        <h2 className="mb-4 font-serif text-lg font-bold text-soil">タイプを追加</h2>
         <form action={createType} className="space-y-4">
           <div>
-            <label htmlFor="genreId" className="mb-1 block text-sm font-medium">
-              ジャンル <span className="text-rose-500">*</span>
-            </label>
-            <select
-              id="genreId"
-              name="genreId"
-              required
-              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-950"
+            <label
+              htmlFor="genreId"
+              className="mb-2 block font-hand text-sm text-soil-mid"
             >
+              ジャンル <span className="text-berry">*</span>
+            </label>
+            <select id="genreId" name="genreId" required className="input-paper">
               <option value="">選択してください</option>
               {genres.map((g) => (
                 <option key={g.id} value={g.id}>
@@ -72,8 +93,11 @@ export default async function AdminTypesPage({
           </div>
 
           <div>
-            <label htmlFor="label" className="mb-1 block text-sm font-medium">
-              ラベル <span className="text-rose-500">*</span>
+            <label
+              htmlFor="label"
+              className="mb-2 block font-hand text-sm text-soil-mid"
+            >
+              ラベル <span className="text-berry">*</span>
             </label>
             <input
               id="label"
@@ -81,13 +105,16 @@ export default async function AdminTypesPage({
               required
               maxLength={40}
               placeholder="例：王様ゲーム"
-              className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+              className="input-paper"
             />
           </div>
 
           <div>
-            <label htmlFor="slug" className="mb-1 block text-sm font-medium">
-              スラッグ（URL用） <span className="text-rose-500">*</span>
+            <label
+              htmlFor="slug"
+              className="mb-2 block font-hand text-sm text-soil-mid"
+            >
+              スラッグ（URL用） <span className="text-berry">*</span>
             </label>
             <input
               id="slug"
@@ -96,37 +123,41 @@ export default async function AdminTypesPage({
               pattern="[a-z0-9-]+"
               maxLength={40}
               placeholder="例：king-game"
-              className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+              className="input-paper"
             />
-            <p className="mt-1 text-xs text-zinc-500">半角英小文字・数字・ハイフンのみ。ジャンルIDと組み合わせて Type ID になります。</p>
+            <p className="mt-2 font-hand text-xs text-soil-faint">
+              半角英小文字・数字・ハイフンのみ
+            </p>
           </div>
 
-          <button
-            type="submit"
-            className="w-full rounded-full bg-zinc-900 py-2.5 font-medium text-white hover:opacity-90 dark:bg-zinc-100 dark:text-zinc-900"
-          >
-            追加
+          <button type="submit" className="btn-primary w-full">
+            🌱 追加
           </button>
         </form>
       </section>
 
       <section>
-        <h2 className="mb-3 text-base font-semibold">現在のタクソノミー</h2>
+        <h2 className="section-title mb-4">現在のタクソノミー</h2>
         <div className="space-y-4">
           {genres.map((g) => (
-            <div key={g.id} className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-              <h3 className="mb-2 font-medium">
-                {g.emoji} {g.label}
-                <span className="ml-2 text-xs text-zinc-500">{g.id}</span>
+            <div key={g.id} className="paper-card-flat p-5">
+              <h3 className="mb-3 flex items-center justify-between font-serif text-base font-bold text-soil">
+                <span>
+                  {g.emoji} {g.label}
+                </span>
+                <span className="font-hand text-xs text-soil-faint">{g.id}</span>
               </h3>
               {g.types.length === 0 ? (
-                <p className="text-sm text-zinc-500">タイプなし</p>
+                <p className="font-hand text-sm text-soil-faint">タイプなし</p>
               ) : (
-                <ul className="space-y-1 text-sm">
+                <ul className="space-y-1.5 text-sm">
                   {g.types.map((t) => (
-                    <li key={t.id} className="flex items-center justify-between">
-                      <span>{t.label}</span>
-                      <span className="text-xs text-zinc-500">{t.id}</span>
+                    <li
+                      key={t.id}
+                      className="flex items-center justify-between border-b border-line-soft pb-1.5 last:border-0 last:pb-0"
+                    >
+                      <span className="text-soil">{t.label}</span>
+                      <span className="font-hand text-xs text-soil-faint">{t.id}</span>
                     </li>
                   ))}
                 </ul>

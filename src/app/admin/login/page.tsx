@@ -11,35 +11,52 @@ export default async function AdminLoginPage({
   const { error } = await searchParams;
   return (
     <main className="mx-auto w-full max-w-sm flex-1 px-6 py-12">
-      <Link href="/" className="text-sm text-zinc-500 hover:underline">
-        ← 戻る
+      <Link
+        href="/"
+        className="font-hand text-sm text-soil-faint hover:text-sprout transition-colors"
+      >
+        ← ホームに戻る
       </Link>
-      <h1 className="mt-3 mb-6 text-2xl font-bold">🔐 管理者ログイン</h1>
+      <header className="mt-5 mb-8 text-center">
+        <div className="text-3xl">🔐</div>
+        <h1 className="mt-3 font-serif text-2xl font-bold text-soil">管理者ログイン</h1>
+      </header>
 
       {error === "invalid" && (
-        <div className="mb-4 rounded-md border border-rose-300 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300">
+        <div
+          className="mb-4 rounded-[10px_12px_10px_12px] border p-3 font-hand text-sm"
+          style={{
+            background: "color-mix(in srgb, var(--berry) 10%, var(--bg-raised))",
+            borderColor: "color-mix(in srgb, var(--berry) 40%, var(--line))",
+            color: "var(--berry)",
+          }}
+        >
           パスワードが違います
         </div>
       )}
       {error === "missing-password-config" && (
-        <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+        <div
+          className="mb-4 rounded-[10px_12px_10px_12px] border p-3 font-hand text-sm"
+          style={{
+            background: "color-mix(in srgb, var(--sun) 15%, var(--bg-raised))",
+            borderColor: "color-mix(in srgb, var(--sun) 50%, var(--line))",
+            color: "var(--fg-muted)",
+          }}
+        >
           サーバーに ADMIN_PASSWORD が設定されていません
         </div>
       )}
 
-      <form action={adminLogin} className="space-y-3">
+      <form action={adminLogin} className="paper-card-flat space-y-4 p-6">
         <input
           type="password"
           name="password"
           required
           autoFocus
           placeholder="パスワード"
-          className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-zinc-500 dark:border-zinc-700"
+          className="input-paper"
         />
-        <button
-          type="submit"
-          className="w-full rounded-full bg-zinc-900 py-2.5 font-medium text-white hover:opacity-90 dark:bg-zinc-100 dark:text-zinc-900"
-        >
+        <button type="submit" className="btn-primary w-full">
           ログイン
         </button>
       </form>
