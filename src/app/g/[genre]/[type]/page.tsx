@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { JsonLd } from "@/components/JsonLd";
+import { getSiteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -53,8 +55,30 @@ export default async function TypePage({
     take: 50,
   });
 
+  const siteUrl = getSiteUrl();
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "ホーム", item: siteUrl },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: t.genre.label,
+        item: `${siteUrl}/g/${genre}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: t.label,
+        item: `${siteUrl}/g/${genre}/${type}`,
+      },
+    ],
+  };
+
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
+      <JsonLd data={breadcrumb} />
       <nav className="font-hand text-sm text-soil-faint">
         <Link href="/" className="hover:text-sprout transition-colors">
           ホーム

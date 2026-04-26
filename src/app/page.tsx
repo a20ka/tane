@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { SproutMark } from "@/components/Logo";
+import { JsonLd } from "@/components/JsonLd";
+import { getSiteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -33,8 +35,51 @@ export default async function Home() {
     ideaCountByGenre.set(genreId, (ideaCountByGenre.get(genreId) ?? 0) + row._count._all);
   }
 
+  const siteUrl = getSiteUrl();
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        url: siteUrl,
+        name: "Tane",
+        alternateName: "種",
+        description:
+          "未完成のアイデアを蒔いて、みんなで育てて形にする場所。物語・映画・ゲーム・体験・夢など、あらゆるジャンルのクリエイティブな種を共有できます。",
+        inLanguage: "ja-JP",
+        publisher: { "@id": `${siteUrl}/#organization` },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${siteUrl}/?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organization`,
+        url: siteUrl,
+        name: "Tane",
+        description: "アイデアの種を蒔いて、みんなで育てて形にするプラットフォーム",
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": `${siteUrl}/#webpage`,
+        url: siteUrl,
+        name: "Tane — 世界のアイデアの脳みそ",
+        isPartOf: { "@id": `${siteUrl}/#website` },
+        about: { "@id": `${siteUrl}/#organization` },
+        inLanguage: "ja-JP",
+      },
+    ],
+  };
+
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
+      <JsonLd data={websiteSchema} />
       <header className="mb-14 text-center">
         <div className="mb-4 inline-flex text-sprout">
           <SproutMark size={64} />

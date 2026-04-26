@@ -11,6 +11,8 @@ import {
   toggleInterest,
 } from "@/lib/actions";
 import { getCurrentUser, isAdmin } from "@/lib/auth";
+import { JsonLd } from "@/components/JsonLd";
+import { getSiteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -80,8 +82,69 @@ export default async function IdeaPage({
   const author = idea.author?.displayName ?? idea.authorName ?? "名もなき種人";
   const typeSlug = idea.type.id.replace(`${idea.type.genreId}-`, "");
 
+  const siteUrl = getSiteUrl();
+  const ideaUrl = `${siteUrl}/idea/${idea.id}`;
+  const ideaSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": `${ideaUrl}#article`,
+        headline: idea.title,
+        description: (idea.body ?? "").trim().slice(0, 160) || `${idea.type.genre.label}・${idea.type.label}のアイデア`,
+        articleBody: idea.body ?? undefined,
+        articleSection: `${idea.type.genre.label} / ${idea.type.label}`,
+        keywords: ["アイデア", idea.type.genre.label, idea.type.label, "Tane"],
+        url: ideaUrl,
+        datePublished: idea.createdAt.toISOString(),
+        dateModified: idea.createdAt.toISOString(),
+        author: { "@type": "Person", name: author },
+        publisher: {
+          "@type": "Organization",
+          name: "Tane",
+          url: siteUrl,
+        },
+        inLanguage: "ja-JP",
+        mainEntityOfPage: { "@type": "WebPage", "@id": ideaUrl },
+        commentCount: comments.length + augments.length,
+        interactionStatistic: [
+          {
+            "@type": "InteractionCounter",
+            interactionType: "https://schema.org/CommentAction",
+            userInteractionCount: comments.length + augments.length,
+          },
+          {
+            "@type": "InteractionCounter",
+            interactionType: "https://schema.org/LikeAction",
+            userInteractionCount: idea.reactions.length,
+          },
+        ],
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "ホーム", item: siteUrl },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: idea.type.genre.label,
+            item: `${siteUrl}/g/${idea.type.genreId}`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: idea.type.label,
+            item: `${siteUrl}/g/${idea.type.genreId}/${typeSlug}`,
+          },
+          { "@type": "ListItem", position: 4, name: idea.title, item: ideaUrl },
+        ],
+      },
+    ],
+  };
+
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
+      <JsonLd data={ideaSchema} />
       <nav className="font-hand text-sm text-soil-faint">
         <Link href="/" className="hover:text-sprout transition-colors">
           ホーム

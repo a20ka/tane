@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { JsonLd } from "@/components/JsonLd";
+import { getSiteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -50,8 +52,24 @@ export default async function GenrePage({
     take: 30,
   });
 
+  const siteUrl = getSiteUrl();
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "ホーム", item: siteUrl },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: genre.label,
+        item: `${siteUrl}/g/${genre.id}`,
+      },
+    ],
+  };
+
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
+      <JsonLd data={breadcrumb} />
       <Link href="/" className="font-hand text-sm text-soil-faint hover:text-sprout transition-colors">
         ← ホームに戻る
       </Link>
